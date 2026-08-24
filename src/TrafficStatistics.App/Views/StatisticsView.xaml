@@ -26,25 +26,29 @@
             <WrapPanel VerticalAlignment="Center">
                 <!-- Period Selector -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
-                    <TextBlock Text="统计维度:" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <ComboBox ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding SelectedPeriod}" Width="100" Padding="6,4" 
+                    <TextBlock Text="{DynamicResource Stats_TimeDimension}" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox ItemsSource="{Binding PeriodOptions}" 
+                              SelectedValue="{Binding SelectedPeriodKey}" 
+                              SelectedValuePath="Key" 
+                              DisplayMemberPath="DisplayName"
+                              MinWidth="100" Padding="6,4" 
                               Background="{DynamicResource WindowBackgroundBrush}" Foreground="{DynamicResource PrimaryTextBrush}" BorderBrush="{DynamicResource BorderBrush}"/>
                 </StackPanel>
 
                 <!-- Custom Range DatePickers (Visible when custom period is active) -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,16,0" 
                             Visibility="{Binding IsCustomPeriodActive, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <TextBlock Text="从:" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <TextBlock Text="{DynamicResource Stats_From}" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <DatePicker SelectedDate="{Binding CustomStartDate}" Width="120" BorderBrush="{DynamicResource BorderBrush}"/>
                     
-                    <TextBlock Text="至:" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" Margin="8,0,4,0"/>
+                    <TextBlock Text="{DynamicResource Stats_To}" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" Margin="8,0,4,0"/>
                     <DatePicker SelectedDate="{Binding CustomEndDate}" Width="120" BorderBrush="{DynamicResource BorderBrush}"/>
 
-                    <Button Content="查询" Command="{Binding LoadDataCommand}" Style="{StaticResource HeaderButtonStyle}" Margin="8,0,0,0"/>
+                    <Button Content="{DynamicResource Stats_Query}" Command="{Binding LoadDataCommand}" Style="{StaticResource HeaderButtonStyle}" Margin="8,0,0,0"/>
                 </StackPanel>
 
                 <!-- Action Button -->
-                <Button Content="导出 CSV" Command="{Binding ExportToCsvCommand}" Style="{StaticResource HeaderButtonStyle}" Width="90"/>
+                <Button Content="{DynamicResource Stats_ExportCsv}" Command="{Binding ExportToCsvCommand}" Style="{StaticResource HeaderButtonStyle}" Width="90"/>
             </WrapPanel>
         </Border>
 
@@ -59,7 +63,7 @@
             <!-- Total Upload Card -->
             <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,8,0">
                 <StackPanel>
-                    <TextBlock Text="所选区间总上传" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBlock Text="{DynamicResource Stats_TotalPeriodSent}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
                     <TextBlock Text="{Binding TotalPeriodSent}" Foreground="{DynamicResource WarningBrush}" FontSize="20" FontWeight="Bold"/>
                 </StackPanel>
             </Border>
@@ -67,7 +71,7 @@
             <!-- Total Download Card -->
             <Border Grid.Column="1" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="8,0,8,0">
                 <StackPanel>
-                    <TextBlock Text="所选区间总下载" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBlock Text="{DynamicResource Stats_TotalPeriodRecv}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
                     <TextBlock Text="{Binding TotalPeriodRecv}" Foreground="{DynamicResource SuccessBrush}" FontSize="20" FontWeight="Bold"/>
                 </StackPanel>
             </Border>
@@ -75,7 +79,7 @@
             <!-- Total Traffic Card -->
             <Border Grid.Column="2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="8,0,0,0">
                 <StackPanel>
-                    <TextBlock Text="所选区间总流量" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBlock Text="{DynamicResource Stats_TotalPeriodTraffic}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
                     <TextBlock Text="{Binding TotalPeriodTraffic}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="20" FontWeight="Bold"/>
                 </StackPanel>
             </Border>
@@ -88,7 +92,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="流量变化趋势" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" FontWeight="SemiBold" Margin="4,0,0,4"/>
+                <TextBlock Grid.Row="0" Text="{DynamicResource Stats_ChartTitle}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" FontWeight="SemiBold" Margin="4,0,0,4"/>
                 <lvc:CartesianChart Grid.Row="1" Series="{Binding TrafficChartSeries}" XAxes="{Binding XAxes}" YAxes="{Binding YAxes}" LegendPosition="Right"/>
             </Grid>
         </Border>
@@ -100,7 +104,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="进程流量消耗排行" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" FontWeight="SemiBold" Margin="16,12,0,8"/>
+                <TextBlock Grid.Row="0" Text="{DynamicResource Stats_RankingTitle}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" FontWeight="SemiBold" Margin="16,12,0,8"/>
                 <DataGrid Grid.Row="1" ItemsSource="{Binding TopProcesses}" 
                           AutoGenerateColumns="False" 
                           CanUserAddRows="False"
@@ -150,7 +154,7 @@
                         </Style>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="排名" Binding="{Binding Rank}" Width="60" SortMemberPath="Rank">
+                        <DataGridTextColumn Header="{DynamicResource Col_Rank}" Binding="{Binding Rank}" Width="60" SortMemberPath="Rank">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="FontWeight" Value="Bold"/>
@@ -160,7 +164,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTemplateColumn Header="进程" Width="2*" SortMemberPath="ProcessName">
+                        <DataGridTemplateColumn Header="{DynamicResource Col_Process}" Width="2*" SortMemberPath="ProcessName">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="4,0">
@@ -171,7 +175,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="PID/标识" Binding="{Binding ProcessId}" Width="80" SortMemberPath="ProcessId">
+                        <DataGridTextColumn Header="{DynamicResource Col_ProcessId}" Binding="{Binding ProcessId}" Width="80" SortMemberPath="ProcessId">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="VerticalAlignment" Value="Center"/>
@@ -179,7 +183,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="已上传" Binding="{Binding TotalSentText}" Width="120" SortMemberPath="TotalSent">
+                        <DataGridTextColumn Header="{DynamicResource Col_Sent}" Binding="{Binding TotalSentText}" Width="120" SortMemberPath="TotalSent">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
@@ -188,7 +192,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="已下载" Binding="{Binding TotalRecvText}" Width="120" SortMemberPath="TotalRecv">
+                        <DataGridTextColumn Header="{DynamicResource Col_Recv}" Binding="{Binding TotalRecvText}" Width="120" SortMemberPath="TotalRecv">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
@@ -197,7 +201,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="总计流量" Binding="{Binding TotalTrafficText}" Width="120" SortMemberPath="TotalTraffic">
+                        <DataGridTextColumn Header="{DynamicResource Col_TotalTraffic}" Binding="{Binding TotalTrafficText}" Width="120" SortMemberPath="TotalTraffic">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="FontWeight" Value="SemiBold"/>

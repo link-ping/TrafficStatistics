@@ -1,3 +1,4 @@
+using TrafficStatistics.App.Services;
 using TrafficStatistics.Core.Services;
 using TrafficStatistics.Data;
 using TrafficStatistics.Data.Repositories;
@@ -28,6 +29,9 @@ public partial class App : Application
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
             {
+                // Localization Service
+                services.AddSingleton<LocalizationService>();
+
                 // Core Services
                 services.AddSingleton<ProcessInfoService>();
                 services.AddSingleton<IAggregationService, AggregationService>();
@@ -54,6 +58,11 @@ public partial class App : Application
         base.OnStartup(e);
 
         await _host.StartAsync();
+
+        // 0. Initialize language from saved settings
+        var localizationService = _host.Services.GetRequiredService<LocalizationService>();
+        var savedLanguage = LoadSavedLanguage();
+        localizationService.ApplyLanguage(savedLanguage);
 
         // 1. Ensure database is created and migrated
         using (var scope = _host.Services.CreateScope())
@@ -118,8 +127,9 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"无法启动网络流量采集服务：{ex.Message}\n请确保以管理员权限运行此程序！", 
-                "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            var errorMsg = string.Format(localizationService.GetString("Msg_CaptureStartError", "无法启动网络流量采集服务：{0}\n请确保以管理员权限运行此程序！"), ex.Message);
+            var errorTitle = localizationService.GetString("Msg_Error", "错误");
+            MessageBox.Show(errorMsg, errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
             Shutdown();
             return;
         }
@@ -135,6 +145,28 @@ public partial class App : Application
         // 8. Show main window
         var mainWindow = new MainWindow(_host.Services.GetRequiredService<MainViewModel>());
         mainWindow.Show();
+    }
+
+    private static string LoadSavedLanguage()
+    {
+        try
+        {
+            var settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+            if (File.Exists(settingsPath))
+            {
+                var json = File.ReadAllText(settingsPath);
+                var settings = JsonSerializer.Deserialize<AppSettingsData>(json);
+                if (!string.IsNullOrEmpty(settings?.Language))
+                {
+                    return settings.Language;
+                }
+            }
+        }
+        catch
+        {
+            // Ignore error
+        }
+        return "zh-CN";
     }
 
     private async Task RunStartupCleanupAsync()

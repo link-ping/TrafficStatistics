@@ -1,0 +1,103 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Global / Window / Sidebar -->
+    <sys:String x:Key="App_Title">Traffic Statistics Tool</sys:String>
+    <sys:String x:Key="App_TrayToolTip">Traffic Statistics - Double click to restore</sys:String>
+    <sys:String x:Key="App_TotalSpeed">Total Speed:</sys:String>
+    <sys:String x:Key="App_UploadSpeed">Total Upload</sys:String>
+    <sys:String x:Key="App_DownloadSpeed">Total Download</sys:String>
+    <sys:String x:Key="App_ActiveProcesses">Active Processes</sys:String>
+    <sys:String x:Key="App_DarkMode">Dark Mode</sys:String>
+    <sys:String x:Key="App_LightMode">Light Mode</sys:String>
+
+    <!-- Navigation -->
+    <sys:String x:Key="Nav_Realtime">Real-time</sys:String>
+    <sys:String x:Key="Nav_Statistics">Statistics</sys:String>
+    <sys:String x:Key="Nav_Settings">Settings</sys:String>
+
+    <!-- Realtime View -->
+    <sys:String x:Key="Realtime_ChartTitle">Real-time Speed (Last 60s)</sys:String>
+    <sys:String x:Key="Realtime_ChartUpload">Upload Speed</sys:String>
+    <sys:String x:Key="Realtime_ChartDownload">Download Speed</sys:String>
+    <sys:String x:Key="Realtime_ChartSpeedAxis">Speed</sys:String>
+    <sys:String x:Key="Realtime_SearchPlaceholder">Search process name or PID...</sys:String>
+    <sys:String x:Key="Col_ProcessName">Process Name</sys:String>
+    <sys:String x:Key="Col_PID">PID</sys:String>
+    <sys:String x:Key="Col_UploadSpeed">Upload Speed</sys:String>
+    <sys:String x:Key="Col_DownloadSpeed">Download Speed</sys:String>
+    <sys:String x:Key="Col_TotalSent">Total Sent</sys:String>
+    <sys:String x:Key="Col_TotalRecv">Total Recv</sys:String>
+
+    <!-- Statistics View -->
+    <sys:String x:Key="Stats_TimeDimension">Time Range:</sys:String>
+    <sys:String x:Key="Stats_Period_Hour">Hourly</sys:String>
+    <sys:String x:Key="Stats_Period_Day">Daily</sys:String>
+    <sys:String x:Key="Stats_Period_Week">Weekly</sys:String>
+    <sys:String x:Key="Stats_Period_Month">Monthly</sys:String>
+    <sys:String x:Key="Stats_Period_Custom">Custom</sys:String>
+    <sys:String x:Key="Stats_From">From:</sys:String>
+    <sys:String x:Key="Stats_To">To:</sys:String>
+    <sys:String x:Key="Stats_Query">Query</sys:String>
+    <sys:String x:Key="Stats_ExportCsv">Export CSV</sys:String>
+    <sys:String x:Key="Stats_TotalPeriodSent">Period Upload</sys:String>
+    <sys:String x:Key="Stats_TotalPeriodRecv">Period Download</sys:String>
+    <sys:String x:Key="Stats_TotalPeriodTraffic">Period Total</sys:String>
+    <sys:String x:Key="Stats_ChartTitle">Traffic Trend</sys:String>
+    <sys:String x:Key="Stats_ChartUpload">Upload Traffic</sys:String>
+    <sys:String x:Key="Stats_ChartDownload">Download Traffic</sys:String>
+    <sys:String x:Key="Stats_RankingTitle">Process Traffic Ranking</sys:String>
+    <sys:String x:Key="Col_Rank">Rank</sys:String>
+    <sys:String x:Key="Col_Process">Process</sys:String>
+    <sys:String x:Key="Col_ProcessId">PID / ID</sys:String>
+    <sys:String x:Key="Col_Sent">Sent</sys:String>
+    <sys:String x:Key="Col_Recv">Recv</sys:String>
+    <sys:String x:Key="Col_TotalTraffic">Total Traffic</sys:String>
+    <sys:String x:Key="Stats_ExportSuccess">Data exported successfully!</sys:String>
+    <sys:String x:Key="Stats_ExportFailed">Export failed: </sys:String>
+    <sys:String x:Key="Stats_CsvFileName">TrafficStatistics</sys:String>
+    <sys:String x:Key="Stats_CsvHeader">Rank,Process Name,Executable Path,Upload (Bytes),Download (Bytes),Total Traffic (Bytes)</sys:String>
+
+    <!-- Settings View -->
+    <sys:String x:Key="Settings_Title">Settings</sys:String>
+    <sys:String x:Key="Settings_General">General</sys:String>
+    <sys:String x:Key="Settings_AutoStart">Start on Windows Boot</sys:String>
+    <sys:String x:Key="Settings_AutoStartDesc">Automatically launch traffic statistics tool when Windows starts (as Administrator)</sys:String>
+    <sys:String x:Key="Settings_Language">Display Language</sys:String>
+    <sys:String x:Key="Settings_LanguageDesc">Choose the display language for the application interface</sys:String>
+    <sys:String x:Key="Settings_DataStorage">Data Storage</sys:String>
+    <sys:String x:Key="Settings_MinuteRetention">High-Precision Data Retention</sys:String>
+    <sys:String x:Key="Settings_MinuteRetentionDesc">Retention period for minute-level network traffic details. Longer periods increase database size</sys:String>
+    <sys:String x:Key="Settings_DailyRetention">Daily Summary Retention</sys:String>
+    <sys:String x:Key="Settings_DailyRetentionDesc">Retention period for daily aggregated process traffic summaries</sys:String>
+    <sys:String x:Key="Settings_ClearHistory">Clear Historical Data</sys:String>
+    <sys:String x:Key="Settings_ClearHistoryHint">* Clears all historical captured process traffic data and resets stats</sys:String>
+    <sys:String x:Key="Settings_Save">Save Settings</sys:String>
+    <sys:String x:Key="Settings_About">About Traffic Statistics</sys:String>
+    <sys:String x:Key="Settings_Version">Version: v1.0.0</sys:String>
+    <sys:String x:Key="Settings_AboutDesc">A real-time network traffic monitor and historical analysis tool for Windows. Runs completely offline with no data upload and requires no additional drivers, utilizing ETW (Event Tracing for Windows) technology.</sys:String>
+
+    <!-- Retention Units -->
+    <sys:String x:Key="Unit_Day_1">1 Day</sys:String>
+    <sys:String x:Key="Unit_Days_3">3 Days</sys:String>
+    <sys:String x:Key="Unit_Days_7">7 Days</sys:String>
+    <sys:String x:Key="Unit_Days_14">14 Days</sys:String>
+    <sys:String x:Key="Unit_Days_30">30 Days</sys:String>
+    <sys:String x:Key="Unit_Days_90">90 Days</sys:String>
+    <sys:String x:Key="Unit_Days_180">180 Days</sys:String>
+    <sys:String x:Key="Unit_Days_365">365 Days</sys:String>
+    <sys:String x:Key="Unit_Permanent">Permanent</sys:String>
+
+    <!-- Messages / Dialogs -->
+    <sys:String x:Key="Msg_SaveSuccess">Settings saved successfully!</sys:String>
+    <sys:String x:Key="Msg_SaveFailed">Failed to save settings: </sys:String>
+    <sys:String x:Key="Msg_PurgeConfirm">Are you sure you want to clear all historical traffic records from the database? This action cannot be undone.</sys:String>
+    <sys:String x:Key="Msg_PurgeSuccess">Historical data cleared successfully!</sys:String>
+    <sys:String x:Key="Msg_PurgeFailed">Failed to clear data: </sys:String>
+    <sys:String x:Key="Msg_Prompt">Information</sys:String>
+    <sys:String x:Key="Msg_Warning">Warning</sys:String>
+    <sys:String x:Key="Msg_Error">Error</sys:String>
+    <sys:String x:Key="Msg_CaptureStartError">Failed to start network traffic capture service: {0}&#x0a;Please ensure this application is run with Administrator privileges!</sys:String>
+
+</ResourceDictionary>

@@ -27,7 +27,7 @@
             <!-- Total Upload Card -->
             <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,8,0">
                 <StackPanel>
-                    <TextBlock Text="总上传速度" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBlock Text="{DynamicResource App_UploadSpeed}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
                     <TextBlock Text="{Binding DataContext.TotalUploadSpeed, RelativeSource={RelativeSource AncestorType=Window}}" Foreground="{DynamicResource WarningBrush}" FontSize="24" FontWeight="Bold"/>
                 </StackPanel>
             </Border>
@@ -35,7 +35,7 @@
             <!-- Total Download Card -->
             <Border Grid.Column="1" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="8,0,8,0">
                 <StackPanel>
-                    <TextBlock Text="总下载速度" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBlock Text="{DynamicResource App_DownloadSpeed}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
                     <TextBlock Text="{Binding DataContext.TotalDownloadSpeed, RelativeSource={RelativeSource AncestorType=Window}}" Foreground="{DynamicResource SuccessBrush}" FontSize="24" FontWeight="Bold"/>
                 </StackPanel>
             </Border>
@@ -43,7 +43,7 @@
             <!-- Active Processes Card -->
             <Border Grid.Column="2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="8,0,0,0">
                 <StackPanel>
-                    <TextBlock Text="活动进程数" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBlock Text="{DynamicResource App_ActiveProcesses}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" Margin="0,0,0,4"/>
                     <TextBlock Text="{Binding ActiveProcessesCount}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="24" FontWeight="Bold"/>
                 </StackPanel>
             </Border>
@@ -56,7 +56,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="实时速率监控 (最近 60 秒)" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" FontWeight="SemiBold" Margin="4,0,0,4"/>
+                <TextBlock Grid.Row="0" Text="{DynamicResource Realtime_ChartTitle}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" FontWeight="SemiBold" Margin="4,0,0,4"/>
                 <lvc:CartesianChart Grid.Row="1" Series="{Binding SpeedChartSeries}" XAxes="{Binding XAxes}" YAxes="{Binding YAxes}" LegendPosition="Right"/>
             </Grid>
         </Border>
@@ -74,9 +74,9 @@
                      BorderThickness="1" 
                      Padding="8,6" 
                      VerticalContentAlignment="Center"
-                     Tag="搜索进程名称或 PID..."/>
+                     Tag="{DynamicResource Realtime_SearchPlaceholder}"/>
             <!-- Textbox Placeholder Helper -->
-            <TextBlock Grid.Column="0" IsHitTestVisible="False" Text="搜索进程名称或 PID..." 
+            <TextBlock Grid.Column="0" IsHitTestVisible="False" Text="{DynamicResource Realtime_SearchPlaceholder}" 
                        Foreground="{DynamicResource SecondaryTextBrush}" 
                        Margin="10,0,0,0" VerticalAlignment="Center" 
                        FontStyle="Italic">
@@ -145,7 +145,7 @@
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="进程名称" Width="2*" SortMemberPath="ProcessName">
+                    <DataGridTemplateColumn Header="{DynamicResource Col_ProcessName}" Width="2*" SortMemberPath="ProcessName">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="4,0">
@@ -156,7 +156,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     
-                    <DataGridTextColumn Header="PID" Binding="{Binding Pid}" Width="80" SortMemberPath="Pid">
+                    <DataGridTextColumn Header="{DynamicResource Col_PID}" Binding="{Binding Pid}" Width="80" SortMemberPath="Pid">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="VerticalAlignment" Value="Center"/>
@@ -164,7 +164,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     
-                    <DataGridTextColumn Header="上传速度" Binding="{Binding UploadSpeedText}" Width="120" SortMemberPath="UploadSpeed">
+                    <DataGridTextColumn Header="{DynamicResource Col_UploadSpeed}" Binding="{Binding UploadSpeedText}" Width="120" SortMemberPath="UploadSpeed">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
@@ -174,7 +174,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     
-                    <DataGridTextColumn Header="下载速度" Binding="{Binding DownloadSpeedText}" Width="120" SortMemberPath="DownloadSpeed">
+                    <DataGridTextColumn Header="{DynamicResource Col_DownloadSpeed}" Binding="{Binding DownloadSpeedText}" Width="120" SortMemberPath="DownloadSpeed">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
@@ -184,7 +184,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     
-                    <DataGridTextColumn Header="累计发送" Binding="{Binding TotalSentText}" Width="120" SortMemberPath="TotalSent">
+                    <DataGridTextColumn Header="{DynamicResource Col_TotalSent}" Binding="{Binding TotalSentText}" Width="120" SortMemberPath="TotalSent">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="VerticalAlignment" Value="Center"/>
@@ -192,7 +192,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     
-                    <DataGridTextColumn Header="累计接收" Binding="{Binding TotalRecvText}" Width="120" SortMemberPath="TotalRecv">
+                    <DataGridTextColumn Header="{DynamicResource Col_TotalRecv}" Binding="{Binding TotalRecvText}" Width="120" SortMemberPath="TotalRecv">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="VerticalAlignment" Value="Center"/>

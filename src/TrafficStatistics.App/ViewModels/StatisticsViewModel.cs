@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TrafficStatistics.App.Services;
 using TrafficStatistics.Core.Models;
 using TrafficStatistics.Core.Helpers;
 using TrafficStatistics.Data.Repositories;
@@ -20,6 +21,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace TrafficStatistics.App.ViewModels;
+
+/// <summary>
+/// Model for time period selection options.
+/// </summary>
+public class PeriodOption : ObservableObject
+{
+    public string Key { get; init; } = "";
+    private string _displayName = "";
+    public string DisplayName
+    {
+        get => _displayName;
+        set => SetProperty(ref _displayName, value);
+    }
+}
 
 /// <summary>
 /// Row item representing a ranked process in the historical statistics tab.
@@ -88,13 +103,19 @@ public class ProcessTrafficRankItem : ObservableObject
 public partial class StatisticsViewModel : ObservableObject
 {
     private readonly ITrafficRepository _trafficRepository;
+    private readonly LocalizationService _localizationService;
     private readonly ObservableCollection<double> _historicalUpload = new();
     private readonly ObservableCollection<double> _historicalDownload = new();
     private readonly ObservableCollection<string> _chartLabels = new();
+    private readonly LineSeries<double> _uploadSeries;
+    private readonly LineSeries<double> _downloadSeries;
     private List<ProcessTrafficRankItem> _loadedProcesses = new();
 
     [ObservableProperty]
-    private string _selectedPeriod = "日"; // Default is Day
+    private string _selectedPeriodKey = "Day"; // Default is Day
+
+    [ObservableProperty]
+    private ObservableCollection<PeriodOption> _periodOptions = new();
 
     [ObservableProperty]
     private DateTime _customStartDate = DateTime.Today.AddDays(-7);
@@ -123,35 +144,35 @@ public partial class StatisticsViewModel : ObservableObject
 
     public ObservableCollection<Axis> YAxes { get; set; }
 
-    public List<string> PeriodOptions => ["小时", "日", "周", "月", "自定义"];
-
     public string SortColumn { get; set; } = "TotalTraffic";
     public bool SortDescending { get; set; } = true;
 
-    public StatisticsViewModel(ITrafficRepository trafficRepository)
+    public StatisticsViewModel(ITrafficRepository trafficRepository, LocalizationService localizationService)
     {
         _trafficRepository = trafficRepository;
+        _localizationService = localizationService;
 
-        TrafficChartSeries = [
-            new LineSeries<double>
-            {
-                Values = _historicalUpload,
-                Name = "上传流量",
-                Fill = new SolidColorPaint(SKColors.Orange.WithAlpha(30)),
-                Stroke = new SolidColorPaint(SKColors.Orange, 2),
-                GeometrySize = 5,
-                LineSmoothness = 0.4
-            },
-            new LineSeries<double>
-            {
-                Values = _historicalDownload,
-                Name = "下载流量",
-                Fill = new SolidColorPaint(SKColors.SeaGreen.WithAlpha(30)),
-                Stroke = new SolidColorPaint(SKColors.SeaGreen, 2),
-                GeometrySize = 5,
-                LineSmoothness = 0.4
-            }
-        ];
+        _uploadSeries = new LineSeries<double>
+        {
+            Values = _historicalUpload,
+            Name = _localizationService.GetString("Stats_ChartUpload", "上传流量"),
+            Fill = new SolidColorPaint(SKColors.Orange.WithAlpha(30)),
+            Stroke = new SolidColorPaint(SKColors.Orange, 2),
+            GeometrySize = 5,
+            LineSmoothness = 0.4
+        };
+
+        _downloadSeries = new LineSeries<double>
+        {
+            Values = _historicalDownload,
+            Name = _localizationService.GetString("Stats_ChartDownload", "下载流量"),
+            Fill = new SolidColorPaint(SKColors.SeaGreen.WithAlpha(30)),
+            Stroke = new SolidColorPaint(SKColors.SeaGreen, 2),
+            GeometrySize = 5,
+            LineSmoothness = 0.4
+        };
+
+        TrafficChartSeries = [_uploadSeries, _downloadSeries];
 
         XAxes = [
             new Axis
@@ -171,13 +192,36 @@ public partial class StatisticsViewModel : ObservableObject
             }
         ];
 
+        UpdatePeriodOptions();
+        _localizationService.LanguageChanged += OnLanguageChanged;
+
         // Trigger initial data load
         _ = LoadDataAsync();
     }
 
-    partial void OnSelectedPeriodChanged(string value)
+    private void UpdatePeriodOptions()
     {
-        IsCustomPeriodActive = value == "自定义";
+        var options = new List<PeriodOption>
+        {
+            new() { Key = "Hour", DisplayName = _localizationService.GetString("Stats_Period_Hour", "小时") },
+            new() { Key = "Day", DisplayName = _localizationService.GetString("Stats_Period_Day", "日") },
+            new() { Key = "Week", DisplayName = _localizationService.GetString("Stats_Period_Week", "周") },
+            new() { Key = "Month", DisplayName = _localizationService.GetString("Stats_Period_Month", "月") },
+            new() { Key = "Custom", DisplayName = _localizationService.GetString("Stats_Period_Custom", "自定义") }
+        };
+        PeriodOptions = new ObservableCollection<PeriodOption>(options);
+    }
+
+    private void OnLanguageChanged(string cultureCode)
+    {
+        _uploadSeries.Name = _localizationService.GetString("Stats_ChartUpload", "上传流量");
+        _downloadSeries.Name = _localizationService.GetString("Stats_ChartDownload", "下载流量");
+        UpdatePeriodOptions();
+    }
+
+    partial void OnSelectedPeriodKeyChanged(string value)
+    {
+        IsCustomPeriodActive = value == "Custom";
         _ = LoadDataAsync();
     }
 
@@ -188,9 +232,9 @@ public partial class StatisticsViewModel : ObservableObject
         long endTimestamp;
         var now = DateTime.UtcNow;
 
-        switch (SelectedPeriod)
+        switch (SelectedPeriodKey)
         {
-            case "小时":
+            case "Hour":
                 // Last 24 hours
                 var startHour = now.AddHours(-24);
                 startTimestamp = new DateTimeOffset(startHour).ToUnixTimeSeconds();
@@ -198,7 +242,7 @@ public partial class StatisticsViewModel : ObservableObject
                 await LoadHourlyDataAsync(startHour, now);
                 break;
 
-            case "日":
+            case "Day":
                 // Last 30 days
                 var startDay = DateTime.Today.AddDays(-30);
                 var endDay = DateTime.Today;
@@ -207,7 +251,7 @@ public partial class StatisticsViewModel : ObservableObject
                 await LoadDailyDataAsync(startDay, endDay);
                 break;
 
-            case "周":
+            case "Week":
                 // Last 12 weeks
                 var startWeek = DateTime.Today.AddDays(-84); // 12 * 7
                 var endWeek = DateTime.Today;
@@ -216,7 +260,7 @@ public partial class StatisticsViewModel : ObservableObject
                 await LoadWeeklyDataAsync(startWeek, endWeek);
                 break;
 
-            case "月":
+            case "Month":
                 // Last 12 months
                 var startMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-11);
                 var endMonth = DateTime.Today;
@@ -225,7 +269,7 @@ public partial class StatisticsViewModel : ObservableObject
                 await LoadMonthlyDataAsync(startMonth, endMonth);
                 break;
 
-            case "自定义":
+            case "Custom":
             default:
                 startTimestamp = new DateTimeOffset(CustomStartDate.Date).ToUnixTimeSeconds();
                 endTimestamp = new DateTimeOffset(CustomEndDate.Date.AddDays(1).AddTicks(-1)).ToUnixTimeSeconds();
@@ -497,16 +541,18 @@ public partial class StatisticsViewModel : ObservableObject
     {
         try
         {
+            var defaultFileName = $"{_localizationService.GetString("Stats_CsvFileName", "流量统计")}_{SelectedPeriodKey}_{DateTime.Now:yyyyMMdd}.csv";
             var dialog = new Microsoft.Win32.SaveFileDialog
             {
                 Filter = "CSV files (*.csv)|*.csv",
-                FileName = $"流量统计_{SelectedPeriod}_{DateTime.Now:yyyyMMdd}.csv"
+                FileName = defaultFileName
             };
 
             if (dialog.ShowDialog() == true)
             {
                 using var writer = new StreamWriter(dialog.FileName, false, System.Text.Encoding.UTF8);
-                await writer.WriteLineAsync("排名,进程名称,可执行路径,上传流量(Bytes),下载流量(Bytes),总流量(Bytes)");
+                var header = _localizationService.GetString("Stats_CsvHeader", "排名,进程名称,可执行路径,上传流量(Bytes),下载流量(Bytes),总流量(Bytes)");
+                await writer.WriteLineAsync(header);
 
                 foreach (var item in TopProcesses)
                 {
@@ -514,12 +560,16 @@ public partial class StatisticsViewModel : ObservableObject
                     await writer.WriteLineAsync($"{item.Rank},{item.ProcessName},{pathEscaped},{item.TotalSent},{item.TotalRecv},{item.TotalTraffic}");
                 }
 
-                MessageBox.Show("数据导出成功！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(_localizationService.GetString("Stats_ExportSuccess", "数据导出成功！"), 
+                                _localizationService.GetString("Msg_Prompt", "提示"), 
+                                MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"导出失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"{_localizationService.GetString("Stats_ExportFailed", "导出失败: ")}{ex.Message}", 
+                            _localizationService.GetString("Msg_Error", "错误"), 
+                            MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

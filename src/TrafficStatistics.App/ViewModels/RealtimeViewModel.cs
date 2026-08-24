@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using TrafficStatistics.App.Services;
 using TrafficStatistics.Core.Models;
 using TrafficStatistics.Core.Services;
 using TrafficStatistics.Core.Helpers;
@@ -135,9 +136,13 @@ public class ProcessTrafficItem : ObservableObject
 public partial class RealtimeViewModel : ObservableObject
 {
     private readonly IAggregationService _aggregationService;
+    private readonly LocalizationService _localizationService;
     private readonly ObservableCollection<double> _uploadPoints = new();
     private readonly ObservableCollection<double> _downloadPoints = new();
     private readonly Dictionary<int, ProcessTrafficItem> _processCache = new();
+    private readonly LineSeries<double> _uploadSeries;
+    private readonly LineSeries<double> _downloadSeries;
+    private readonly Axis _yAxis;
 
     [ObservableProperty]
     private ObservableCollection<ProcessTrafficItem> _processes = new();
@@ -161,43 +166,49 @@ public partial class RealtimeViewModel : ObservableObject
         }
     ];
 
-    public Axis[] YAxes { get; set; } = [
-        new Axis
+    public Axis[] YAxes { get; set; }
+
+    public RealtimeViewModel(IAggregationService aggregationService, LocalizationService localizationService)
+    {
+        _aggregationService = aggregationService;
+        _localizationService = localizationService;
+
+        _uploadSeries = new LineSeries<double>
+        {
+            Values = _uploadPoints,
+            Name = _localizationService.GetString("Realtime_ChartUpload", "上传速率"),
+            Fill = null,
+            Stroke = new SolidColorPaint(SKColors.Orange, 2),
+            GeometryFill = null,
+            GeometryStroke = null,
+            LineSmoothness = 0.6
+        };
+
+        _downloadSeries = new LineSeries<double>
+        {
+            Values = _downloadPoints,
+            Name = _localizationService.GetString("Realtime_ChartDownload", "下载速率"),
+            Fill = null,
+            Stroke = new SolidColorPaint(SKColors.SeaGreen, 2),
+            GeometryFill = null,
+            GeometryStroke = null,
+            LineSmoothness = 0.6
+        };
+
+        SpeedChartSeries = [_uploadSeries, _downloadSeries];
+
+        _yAxis = new Axis
         {
             Labeler = value => ByteFormatter.FormatSpeed((long)value),
             MinLimit = 0,
-            Name = "速率",
+            Name = _localizationService.GetString("Realtime_ChartSpeedAxis", "速率"),
             NamePaint = new SolidColorPaint(SKColors.Gray),
             LabelsPaint = new SolidColorPaint(SKColors.Gray)
-        }
-    ];
+        };
 
-    public RealtimeViewModel(IAggregationService aggregationService)
-    {
-        _aggregationService = aggregationService;
+        YAxes = [_yAxis];
 
-        SpeedChartSeries = [
-            new LineSeries<double>
-            {
-                Values = _uploadPoints,
-                Name = "上传速率",
-                Fill = null,
-                Stroke = new SolidColorPaint(SKColors.Orange, 2),
-                GeometryFill = null,
-                GeometryStroke = null,
-                LineSmoothness = 0.6
-            },
-            new LineSeries<double>
-            {
-                Values = _downloadPoints,
-                Name = "下载速率",
-                Fill = null,
-                Stroke = new SolidColorPaint(SKColors.SeaGreen, 2),
-                GeometryFill = null,
-                GeometryStroke = null,
-                LineSmoothness = 0.6
-            }
-        ];
+        _localizationService.LanguageChanged += OnLanguageChanged;
 
         // Fill chart with 60 default values (0)
         for (int i = 0; i < 60; i++)
@@ -207,6 +218,13 @@ public partial class RealtimeViewModel : ObservableObject
         }
 
         _aggregationService.OnSnapshotsUpdated += OnSnapshotsUpdated;
+    }
+
+    private void OnLanguageChanged(string cultureCode)
+    {
+        _uploadSeries.Name = _localizationService.GetString("Realtime_ChartUpload", "上传速率");
+        _downloadSeries.Name = _localizationService.GetString("Realtime_ChartDownload", "下载速率");
+        _yAxis.Name = _localizationService.GetString("Realtime_ChartSpeedAxis", "速率");
     }
 
     private void OnSnapshotsUpdated()

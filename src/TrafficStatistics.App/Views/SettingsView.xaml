@@ -26,7 +26,7 @@
             <RowDefinition Height="*"/>      <!-- Settings Content -->
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="配置选项" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="20" FontWeight="Bold" Margin="0,0,0,16"/>
+        <TextBlock Grid.Row="0" Text="{DynamicResource Settings_Title}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="20" FontWeight="Bold" Margin="0,0,0,16"/>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel MaxWidth="600" HorizontalAlignment="Left">
@@ -34,19 +34,39 @@
                 <!-- General Settings Group -->
                 <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,16">
                     <StackPanel>
-                        <TextBlock Text="常规设置" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,16"/>
+                        <TextBlock Text="{DynamicResource Settings_General}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,16"/>
                         
                         <!-- Auto Start -->
-                        <Grid Margin="0,0,0,12">
+                        <Grid Margin="0,0,0,16">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="开机自启动" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="12" FontWeight="SemiBold"/>
-                                <TextBlock Text="当 Windows 启动时自动运行流量统计工具（以管理员模式）" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" Margin="0,2,0,0"/>
+                                <TextBlock Text="{DynamicResource Settings_AutoStart}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="{DynamicResource Settings_AutoStartDesc}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" Margin="0,2,0,0"/>
                             </StackPanel>
                             <CheckBox Grid.Column="1" IsChecked="{Binding AutoStart}" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,16"/>
+
+                        <!-- Language Selection -->
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="220"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                                <TextBlock Text="{DynamicResource Settings_Language}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="{DynamicResource Settings_LanguageDesc}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" Margin="0,2,0,0"/>
+                            </StackPanel>
+                            <ComboBox Grid.Column="1" 
+                                      ItemsSource="{Binding SupportedLanguages}" 
+                                      SelectedValue="{Binding Language}" 
+                                      SelectedValuePath="CultureCode" 
+                                      DisplayMemberPath="DisplayName" 
+                                      VerticalAlignment="Center"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -54,7 +74,7 @@
                 <!-- Storage Settings Group -->
                 <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,16">
                     <StackPanel>
-                        <TextBlock Text="数据存储设置" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,16"/>
+                        <TextBlock Text="{DynamicResource Settings_DataStorage}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,16"/>
 
                         <!-- Minute Retention -->
                         <Grid Margin="0,0,0,16">
@@ -63,15 +83,15 @@
                                 <ColumnDefinition Width="120"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,16,0">
-                                <TextBlock Text="高精细数据保留天数" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="12" FontWeight="SemiBold"/>
-                                <TextBlock Text="分钟级别网络流量详情数据保留天数。保留过长会增大数据库文件大小" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" Margin="0,2,0,0"/>
+                                <TextBlock Text="{DynamicResource Settings_MinuteRetention}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="{DynamicResource Settings_MinuteRetentionDesc}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" Margin="0,2,0,0"/>
                             </StackPanel>
                             <ComboBox Grid.Column="1" SelectedValue="{Binding MinuteDataRetentionDays}" SelectedValuePath="Tag" VerticalAlignment="Center">
-                                <ComboBoxItem Content="1 天" Tag="{StaticResource Int1}"/>
-                                <ComboBoxItem Content="3 天" Tag="{StaticResource Int3}"/>
-                                <ComboBoxItem Content="7 天" Tag="{StaticResource Int7}"/>
-                                <ComboBoxItem Content="14 天" Tag="{StaticResource Int14}"/>
-                                <ComboBoxItem Content="30 天" Tag="{StaticResource Int30}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Day_1}" Tag="{StaticResource Int1}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Days_3}" Tag="{StaticResource Int3}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Days_7}" Tag="{StaticResource Int7}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Days_14}" Tag="{StaticResource Int14}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Days_30}" Tag="{StaticResource Int30}"/>
                             </ComboBox>
                         </Grid>
 
@@ -82,15 +102,15 @@
                                 <ColumnDefinition Width="120"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,16,0">
-                                <TextBlock Text="日汇总结余保留天数" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="12" FontWeight="SemiBold"/>
-                                <TextBlock Text="按天归档的进程累计流量记录保留天数" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" Margin="0,2,0,0"/>
+                                <TextBlock Text="{DynamicResource Settings_DailyRetention}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="{DynamicResource Settings_DailyRetentionDesc}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" Margin="0,2,0,0"/>
                             </StackPanel>
                             <ComboBox Grid.Column="1" SelectedValue="{Binding DailyDataRetentionDays}" SelectedValuePath="Tag" VerticalAlignment="Center">
-                                <ComboBoxItem Content="30 天" Tag="{StaticResource Int30}"/>
-                                <ComboBoxItem Content="90 天" Tag="{StaticResource Int90}"/>
-                                <ComboBoxItem Content="180 天" Tag="{StaticResource Int180}"/>
-                                <ComboBoxItem Content="365 天" Tag="{StaticResource Int365}"/>
-                                <ComboBoxItem Content="永久" Tag="{StaticResource Int9999}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Days_30}" Tag="{StaticResource Int30}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Days_90}" Tag="{StaticResource Int90}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Days_180}" Tag="{StaticResource Int180}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Days_365}" Tag="{StaticResource Int365}"/>
+                                <ComboBoxItem Content="{DynamicResource Unit_Permanent}" Tag="{StaticResource Int9999}"/>
                             </ComboBox>
                         </Grid>
 
@@ -98,15 +118,15 @@
 
                         <!-- Maintenance Actions -->
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="清空历史流量数据" Command="{Binding PurgeDataCommand}" Style="{StaticResource HeaderButtonStyle}" Width="150" Margin="0,0,12,0"/>
-                            <TextBlock Text="* 清空所有进程的历史捕获流量信息，重置统计" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" VerticalAlignment="Center"/>
+                            <Button Content="{DynamicResource Settings_ClearHistory}" Command="{Binding PurgeDataCommand}" Style="{StaticResource HeaderButtonStyle}" Width="150" Margin="0,0,12,0"/>
+                            <TextBlock Text="{DynamicResource Settings_ClearHistoryHint}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
                 <!-- Actions Border -->
                 <Grid Margin="0,8,0,24">
-                    <Button Content="保存配置" Command="{Binding SaveSettingsCommand}" 
+                    <Button Content="{DynamicResource Settings_Save}" Command="{Binding SaveSettingsCommand}" 
                             HorizontalAlignment="Right" Padding="24,10" FontWeight="SemiBold"
                             Background="{DynamicResource AccentBrush}" Foreground="White" BorderThickness="0">
                         <Button.Resources>
@@ -120,9 +140,9 @@
                 <!-- About Group -->
                 <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
                     <StackPanel>
-                        <TextBlock Text="关于流量统计小工具" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12"/>
-                        <TextBlock Text="版本: v1.0.0" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12"/>
-                        <TextBlock Text="这是一个运行在 Windows 上的实时进程网络流量统计和历史汇总工具。该工具纯本地运行，不含任何网络上传，无需任何驱动，底层基于 ETW (Event Tracing for Windows) 技术高效捕获网络套接字传输事件。" 
+                        <TextBlock Text="{DynamicResource Settings_About}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                        <TextBlock Text="{DynamicResource Settings_Version}" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12"/>
+                        <TextBlock Text="{DynamicResource Settings_AboutDesc}" 
                                    Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,8,0,0" LineHeight="18"/>
                     </StackPanel>
                 </Border>

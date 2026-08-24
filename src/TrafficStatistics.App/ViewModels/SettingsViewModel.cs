@@ -1,8 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TrafficStatistics.App.Services;
 using TrafficStatistics.Data.Repositories;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,6 +18,7 @@ namespace TrafficStatistics.App.ViewModels;
 public class AppSettingsData
 {
     public bool AutoStart { get; set; }
+    public string Language { get; set; } = "zh-CN";
     public int MinuteDataRetentionDays { get; set; } = 7;
     public int DailyDataRetentionDays { get; set; } = 365;
 }
@@ -26,6 +29,7 @@ public class AppSettingsData
 public partial class SettingsViewModel : ObservableObject
 {
     private readonly ITrafficRepository _trafficRepository;
+    private readonly LocalizationService _localizationService;
     private static readonly string SettingsFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
     private const string RegistryKeyName = "TrafficStatisticsTool";
 
@@ -33,14 +37,21 @@ public partial class SettingsViewModel : ObservableObject
     private bool _autoStart;
 
     [ObservableProperty]
+    private string _language = "zh-CN";
+
+    [ObservableProperty]
     private int _minuteDataRetentionDays = 7;
 
     [ObservableProperty]
     private int _dailyDataRetentionDays = 365;
 
-    public SettingsViewModel(ITrafficRepository trafficRepository)
+    public IReadOnlyList<LanguageItem> SupportedLanguages => _localizationService.SupportedLanguages;
+
+    public SettingsViewModel(ITrafficRepository trafficRepository, LocalizationService localizationService)
     {
         _trafficRepository = trafficRepository;
+        _localizationService = localizationService;
+        _language = _localizationService.CurrentLanguage;
         LoadSettings();
     }
 
@@ -55,6 +66,10 @@ public partial class SettingsViewModel : ObservableObject
                 if (settings != null)
                 {
                     AutoStart = settings.AutoStart;
+                    if (!string.IsNullOrEmpty(settings.Language))
+                    {
+                        Language = settings.Language;
+                    }
                     MinuteDataRetentionDays = settings.MinuteDataRetentionDays;
                     DailyDataRetentionDays = settings.DailyDataRetentionDays;
                 }
@@ -75,6 +90,14 @@ public partial class SettingsViewModel : ObservableObject
         catch
         {
             // Ignore
+        }
+    }
+
+    partial void OnLanguageChanged(string value)
+    {
+        if (!string.IsNullOrEmpty(value) && _localizationService.CurrentLanguage != value)
+        {
+            _localizationService.ApplyLanguage(value);
         }
     }
 
@@ -107,6 +130,7 @@ public partial class SettingsViewModel : ObservableObject
             var settings = new AppSettingsData
             {
                 AutoStart = AutoStart,
+                Language = Language,
                 MinuteDataRetentionDays = MinuteDataRetentionDays,
                 DailyDataRetentionDays = DailyDataRetentionDays
             };
@@ -127,27 +151,37 @@ public partial class SettingsViewModel : ObservableObject
                 }
             });
 
-            MessageBox.Show("设置保存成功！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(_localizationService.GetString("Msg_SaveSuccess"), 
+                            _localizationService.GetString("Msg_Prompt"), 
+                            MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"保存设置失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"{_localizationService.GetString("Msg_SaveFailed")}{ex.Message}", 
+                            _localizationService.GetString("Msg_Error"), 
+                            MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
     [RelayCommand]
     private async Task PurgeDataAsync()
     {
-        if (MessageBox.Show("确定要清空数据库中的所有历史流量记录吗？此操作无法撤销。", "警告", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+        var confirmMsg = _localizationService.GetString("Msg_PurgeConfirm");
+        var warningTitle = _localizationService.GetString("Msg_Warning");
+        if (MessageBox.Show(confirmMsg, warningTitle, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
         {
             try
             {
                 await _trafficRepository.PurgeOldDataAsync(0, 0);
-                MessageBox.Show("历史数据已成功清空！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(_localizationService.GetString("Msg_PurgeSuccess"), 
+                                _localizationService.GetString("Msg_Prompt"), 
+                                MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"清空数据失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{_localizationService.GetString("Msg_PurgeFailed")}{ex.Message}", 
+                                _localizationService.GetString("Msg_Error"), 
+                                MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
