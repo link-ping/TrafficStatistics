@@ -110,7 +110,7 @@ flowchart TD
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/TrafficStatistics.git
+git clone https://github.com/link-ping/TrafficStatistics.git
 cd TrafficStatistics
 ```
 
