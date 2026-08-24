@@ -9,8 +9,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <!-- Default Theme (Dark) -->
                 <ResourceDictionary Source="pack://application:,,,/TrafficStatistics.App;component/Resources/Themes/DarkTheme.xaml"/>
-                <!-- Default Language (zh-CN) -->
-                <ResourceDictionary Source="pack://application:,,,/TrafficStatistics.App;component/Resources/Languages/Strings.zh-CN.xaml"/>
+                <!-- Default Language (en-US) -->
+                <ResourceDictionary Source="pack://application:,,,/TrafficStatistics.App;component/Resources/Languages/Strings.en-US.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converters -->

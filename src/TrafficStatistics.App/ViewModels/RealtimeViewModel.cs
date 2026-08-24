@@ -176,7 +176,7 @@ public partial class RealtimeViewModel : ObservableObject
         _uploadSeries = new LineSeries<double>
         {
             Values = _uploadPoints,
-            Name = _localizationService.GetString("Realtime_ChartUpload", "上传速率"),
+            Name = _localizationService.GetString("Realtime_ChartUpload", "Upload Speed"),
             Fill = null,
             Stroke = new SolidColorPaint(SKColors.Orange, 2),
             GeometryFill = null,
@@ -187,7 +187,7 @@ public partial class RealtimeViewModel : ObservableObject
         _downloadSeries = new LineSeries<double>
         {
             Values = _downloadPoints,
-            Name = _localizationService.GetString("Realtime_ChartDownload", "下载速率"),
+            Name = _localizationService.GetString("Realtime_ChartDownload", "Download Speed"),
             Fill = null,
             Stroke = new SolidColorPaint(SKColors.SeaGreen, 2),
             GeometryFill = null,
@@ -201,7 +201,7 @@ public partial class RealtimeViewModel : ObservableObject
         {
             Labeler = value => ByteFormatter.FormatSpeed((long)value),
             MinLimit = 0,
-            Name = _localizationService.GetString("Realtime_ChartSpeedAxis", "速率"),
+            Name = _localizationService.GetString("Realtime_ChartSpeedAxis", "Speed"),
             NamePaint = new SolidColorPaint(SKColors.Gray),
             LabelsPaint = new SolidColorPaint(SKColors.Gray)
         };

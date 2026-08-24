@@ -18,7 +18,7 @@ namespace TrafficStatistics.App.ViewModels;
 public class AppSettingsData
 {
     public bool AutoStart { get; set; }
-    public string Language { get; set; } = "zh-CN";
+    public string Language { get; set; } = "en-US";
     public int MinuteDataRetentionDays { get; set; } = 7;
     public int DailyDataRetentionDays { get; set; } = 365;
 }
@@ -37,7 +37,7 @@ public partial class SettingsViewModel : ObservableObject
     private bool _autoStart;
 
     [ObservableProperty]
-    private string _language = "zh-CN";
+    private string _language = "en-US";
 
     [ObservableProperty]
     private int _minuteDataRetentionDays = 7;

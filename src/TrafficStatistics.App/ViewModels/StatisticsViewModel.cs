@@ -155,7 +155,7 @@ public partial class StatisticsViewModel : ObservableObject
         _uploadSeries = new LineSeries<double>
         {
             Values = _historicalUpload,
-            Name = _localizationService.GetString("Stats_ChartUpload", "上传流量"),
+            Name = _localizationService.GetString("Stats_ChartUpload", "Upload Traffic"),
             Fill = new SolidColorPaint(SKColors.Orange.WithAlpha(30)),
             Stroke = new SolidColorPaint(SKColors.Orange, 2),
             GeometrySize = 5,
@@ -165,7 +165,7 @@ public partial class StatisticsViewModel : ObservableObject
         _downloadSeries = new LineSeries<double>
         {
             Values = _historicalDownload,
-            Name = _localizationService.GetString("Stats_ChartDownload", "下载流量"),
+            Name = _localizationService.GetString("Stats_ChartDownload", "Download Traffic"),
             Fill = new SolidColorPaint(SKColors.SeaGreen.WithAlpha(30)),
             Stroke = new SolidColorPaint(SKColors.SeaGreen, 2),
             GeometrySize = 5,
@@ -203,19 +203,19 @@ public partial class StatisticsViewModel : ObservableObject
     {
         var options = new List<PeriodOption>
         {
-            new() { Key = "Hour", DisplayName = _localizationService.GetString("Stats_Period_Hour", "小时") },
-            new() { Key = "Day", DisplayName = _localizationService.GetString("Stats_Period_Day", "日") },
-            new() { Key = "Week", DisplayName = _localizationService.GetString("Stats_Period_Week", "周") },
-            new() { Key = "Month", DisplayName = _localizationService.GetString("Stats_Period_Month", "月") },
-            new() { Key = "Custom", DisplayName = _localizationService.GetString("Stats_Period_Custom", "自定义") }
+            new() { Key = "Hour", DisplayName = _localizationService.GetString("Stats_Period_Hour", "Hourly") },
+            new() { Key = "Day", DisplayName = _localizationService.GetString("Stats_Period_Day", "Daily") },
+            new() { Key = "Week", DisplayName = _localizationService.GetString("Stats_Period_Week", "Weekly") },
+            new() { Key = "Month", DisplayName = _localizationService.GetString("Stats_Period_Month", "Monthly") },
+            new() { Key = "Custom", DisplayName = _localizationService.GetString("Stats_Period_Custom", "Custom") }
         };
         PeriodOptions = new ObservableCollection<PeriodOption>(options);
     }
 
     private void OnLanguageChanged(string cultureCode)
     {
-        _uploadSeries.Name = _localizationService.GetString("Stats_ChartUpload", "上传流量");
-        _downloadSeries.Name = _localizationService.GetString("Stats_ChartDownload", "下载流量");
+        _uploadSeries.Name = _localizationService.GetString("Stats_ChartUpload", "Upload Traffic");
+        _downloadSeries.Name = _localizationService.GetString("Stats_ChartDownload", "Download Traffic");
         UpdatePeriodOptions();
     }
 
@@ -541,7 +541,7 @@ public partial class StatisticsViewModel : ObservableObject
     {
         try
         {
-            var defaultFileName = $"{_localizationService.GetString("Stats_CsvFileName", "流量统计")}_{SelectedPeriodKey}_{DateTime.Now:yyyyMMdd}.csv";
+            var defaultFileName = $"{_localizationService.GetString("Stats_CsvFileName", "TrafficStatistics")}_{SelectedPeriodKey}_{DateTime.Now:yyyyMMdd}.csv";
             var dialog = new Microsoft.Win32.SaveFileDialog
             {
                 Filter = "CSV files (*.csv)|*.csv",
@@ -551,7 +551,7 @@ public partial class StatisticsViewModel : ObservableObject
             if (dialog.ShowDialog() == true)
             {
                 using var writer = new StreamWriter(dialog.FileName, false, System.Text.Encoding.UTF8);
-                var header = _localizationService.GetString("Stats_CsvHeader", "排名,进程名称,可执行路径,上传流量(Bytes),下载流量(Bytes),总流量(Bytes)");
+                var header = _localizationService.GetString("Stats_CsvHeader", "Rank,Process Name,Executable Path,Upload (Bytes),Download (Bytes),Total Traffic (Bytes)");
                 await writer.WriteLineAsync(header);
 
                 foreach (var item in TopProcesses)
@@ -560,15 +560,15 @@ public partial class StatisticsViewModel : ObservableObject
                     await writer.WriteLineAsync($"{item.Rank},{item.ProcessName},{pathEscaped},{item.TotalSent},{item.TotalRecv},{item.TotalTraffic}");
                 }
 
-                MessageBox.Show(_localizationService.GetString("Stats_ExportSuccess", "数据导出成功！"), 
-                                _localizationService.GetString("Msg_Prompt", "提示"), 
+                MessageBox.Show(_localizationService.GetString("Stats_ExportSuccess", "Data exported successfully!"), 
+                                _localizationService.GetString("Msg_Prompt", "Information"), 
                                 MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"{_localizationService.GetString("Stats_ExportFailed", "导出失败: ")}{ex.Message}", 
-                            _localizationService.GetString("Msg_Error", "错误"), 
+            MessageBox.Show($"{_localizationService.GetString("Stats_ExportFailed", "Export failed: ")}{ex.Message}", 
+                            _localizationService.GetString("Msg_Error", "Error"), 
                             MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }

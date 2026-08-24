@@ -23,12 +23,12 @@ public class LocalizationService
 
     public event Action<string>? LanguageChanged;
 
-    public string CurrentLanguage { get; private set; } = "zh-CN";
+    public string CurrentLanguage { get; private set; } = "en-US";
 
     public IReadOnlyList<LanguageItem> SupportedLanguages { get; } = new List<LanguageItem>
     {
-        new("zh-CN", "简体中文 (Chinese Simplified)"),
-        new("en-US", "English (English)")
+        new("en-US", "English (English)"),
+        new("zh-CN", "简体中文 (Chinese Simplified)")
     };
 
     public LocalizationService()
@@ -39,12 +39,12 @@ public class LocalizationService
     /// <summary>
     /// Applies the specified culture/language to the application resources and current thread culture.
     /// </summary>
-    /// <param name="cultureCode">Culture code, e.g., "zh-CN" or "en-US".</param>
+    /// <param name="cultureCode">Culture code, e.g., "en-US" or "zh-CN".</param>
     public void ApplyLanguage(string cultureCode)
     {
         if (string.IsNullOrWhiteSpace(cultureCode) || !SupportedLanguages.Any(l => l.CultureCode.Equals(cultureCode, StringComparison.OrdinalIgnoreCase)))
         {
-            cultureCode = "zh-CN";
+            cultureCode = "en-US";
         }
 
         CurrentLanguage = cultureCode;

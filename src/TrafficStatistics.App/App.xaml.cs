@@ -127,8 +127,8 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            var errorMsg = string.Format(localizationService.GetString("Msg_CaptureStartError", "无法启动网络流量采集服务：{0}\n请确保以管理员权限运行此程序！"), ex.Message);
-            var errorTitle = localizationService.GetString("Msg_Error", "错误");
+            var errorMsg = string.Format(localizationService.GetString("Msg_CaptureStartError", "Failed to start network traffic capture service: {0}\nPlease ensure this application is run with Administrator privileges!"), ex.Message);
+            var errorTitle = localizationService.GetString("Msg_Error", "Error");
             MessageBox.Show(errorMsg, errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
             Shutdown();
             return;
@@ -166,7 +166,7 @@ public partial class App : Application
         {
             // Ignore error
         }
-        return "zh-CN";
+        return "en-US";
     }
 
     private async Task RunStartupCleanupAsync()
