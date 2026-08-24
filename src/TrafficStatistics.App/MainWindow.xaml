@@ -1,0 +1,123 @@
+<Window x:Class="TrafficStatistics.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:TrafficStatistics.App.ViewModels"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        mc:Ignorable="d"
+        Title="流量统计小工具" Height="700" Width="1050"
+        Icon="Resources/app.ico"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}">
+    
+    <Border Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/> <!-- Sidebar -->
+                <ColumnDefinition Width="*"/>   <!-- Content -->
+            </Grid.ColumnDefinitions>
+            <!-- Taskbar Icon for System Tray -->
+            <tb:TaskbarIcon x:Name="MyNotifyIcon" IconSource="Resources/app.ico" TrayMouseDoubleClick="TrayIcon_TrayMouseDoubleClick" ToolTipText="流量统计小工具 - 双击还原"/>
+
+            <!-- Sidebar -->
+            <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="11,0,0,11" BorderThickness="0,0,1,0" BorderBrush="{DynamicResource BorderBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Title/Logo -->
+                        <RowDefinition Height="*"/>    <!-- Navigation Items -->
+                        <RowDefinition Height="Auto"/> <!-- Footer / Toggle -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title / Logo Area -->
+                    <StackPanel Grid.Row="0" Margin="24,32,24,24" Orientation="Horizontal">
+                        <!-- Application Logo -->
+                        <Image Source="Resources/app.png" Width="24" Height="24" VerticalAlignment="Center" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <TextBlock Text="流量统计小工具" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Navigation Items -->
+                    <StackPanel Grid.Row="1" Margin="12,0">
+                        <RadioButton Style="{StaticResource SidebarNavigationButtonStyle}" 
+                                     IsChecked="{Binding SelectedNavIndex, Converter={StaticResource NavigationIndexConverter}, ConverterParameter=0}"
+                                     Command="{Binding NavigateToRealtimeCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📶" FontSize="14" Margin="0,0,12,0"/>
+                                <TextBlock Text="实时监控" FontSize="13" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+
+                        <RadioButton Style="{StaticResource SidebarNavigationButtonStyle}" 
+                                     IsChecked="{Binding SelectedNavIndex, Converter={StaticResource NavigationIndexConverter}, ConverterParameter=1}"
+                                     Command="{Binding NavigateToStatisticsCommand}" Margin="0,6,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📊" FontSize="14" Margin="0,0,12,0"/>
+                                <TextBlock Text="历史统计" FontSize="13" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+
+                        <RadioButton Style="{StaticResource SidebarNavigationButtonStyle}" 
+                                     IsChecked="{Binding SelectedNavIndex, Converter={StaticResource NavigationIndexConverter}, ConverterParameter=2}"
+                                     Command="{Binding NavigateToSettingsCommand}" Margin="0,6,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚙️" FontSize="14" Margin="0,0,12,0"/>
+                                <TextBlock Text="配置选项" FontSize="13" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Margin="16,24">
+                        <Button Style="{StaticResource SidebarButtonStyle}" Command="{Binding ToggleThemeCommand}">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" Visibility="{Binding IsDarkTheme, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                    <TextBlock Text="🌙" FontSize="14" Margin="0,0,12,0"/>
+                                    <TextBlock Text="暗色模式" FontSize="13" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Visibility="{Binding IsDarkTheme, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock Text="☀️" FontSize="14" Margin="0,0,12,0"/>
+                                    <TextBlock Text="明色模式" FontSize="13" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Content Panel -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>  <!-- Title Bar -->
+                    <RowDefinition Height="*"/>   <!-- Content Area -->
+                </Grid.RowDefinitions>
+
+                <!-- Custom Title Bar (Handles Dragging) -->
+                <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Live Total Speed Monitor in Header -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="24,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="当前总速率:" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text=" ↑ " Foreground="{DynamicResource WarningBrush}" FontSize="11" FontWeight="Bold" Margin="8,0,2,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding TotalUploadSpeed}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <TextBlock Text=" ↓ " Foreground="{DynamicResource SuccessBrush}" FontSize="11" FontWeight="Bold" Margin="8,0,2,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding TotalDownloadSpeed}" Foreground="{DynamicResource PrimaryTextBrush}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Titlebar Window Controls -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,12,0">
+                        <Button Content="─" Style="{StaticResource WindowControlButtonStyle}" Click="MinimizeButton_Click"/>
+                        <Button Content="🔳" Style="{StaticResource WindowControlButtonStyle}" Click="MaximizeButton_Click"/>
+                        <Button Content="✕" Style="{StaticResource WindowControlCloseButtonStyle}" Click="CloseButton_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Page content container -->
+                <ContentControl Grid.Row="1" Content="{Binding CurrentView}"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
